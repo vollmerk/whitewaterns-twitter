@@ -11,11 +11,11 @@ the following
 To make it a little easier to keep track of all of these sources, I'm going to break
 up the application into a few pieces. 
 
-`bin/` - Contains the scripts to gather info
-`/source.json` - List of sources and their required info
-`/settings.conf` - Config file with the twitter auth info
-`state/` - One file per data source, holds the last state information
-`/whitewater-twiterbot` - The program itself
+* `bin/` - Contains the scripts to gather info
+* `/source.json` - List of sources and their required info
+* `/settings.conf` - Config file with the twitter auth info
+* `state/` - One file per data source, holds the last state information
+* `/whitewater-twiterbot` - The program itself
 
 #### How it works
 
