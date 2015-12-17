@@ -8,10 +8,28 @@ import os,subprocess,sys
 import ConfigParser
 import json
 import twitter
+import tinyurl
 
 
-def sendTweet():
+def sendTweet(tweetText):
   """ Send a tweet """
+  try: 
+    api = twitter.Api(consumer_key=Config.get('twitter','consumer_key'),
+      consumer_secret=Config.get('twitter','consumer_secret'),
+      access_token_key=Config.get('twitter','access_token'),
+      access_token_secret=Config.get('twitter','access_token_secret'))
+  except:
+    print 'Unable to connect to Twitter please verify your API credentials'
+    return False
+
+  try:
+    api.PostUpdate(tweetText)
+  except:
+    print 'Unable to send %s to twitter, tweet failure' % (tweetText)
+    return False
+
+  print 'Tweeted %s to your account' % (tweetText)
+
 
 
 if __name__ == '__main__':
@@ -23,4 +41,5 @@ if __name__ == '__main__':
   except IOError:
     print ':Main:: IOError opening %s verify permissions' % (os.path.dirname(os.path.abspath(__file__)) + '/settings.conf')
     sys.exit(1)
+
 

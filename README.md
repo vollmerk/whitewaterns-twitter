@@ -4,7 +4,7 @@ and tweets out information so we don't have to check a bunch of places. It check
 the following
 
  * Magicseaweed
- * Environment Canada hyrometric data
+ * Environment Canada hydrometric data
  * Environment Canada last 24hr rainfall amounts
  * Medway river gauge
 
@@ -31,3 +31,4 @@ up the application into a few pieces.
 
  * python-twitter
  * JSON 
+ * tinyurl
