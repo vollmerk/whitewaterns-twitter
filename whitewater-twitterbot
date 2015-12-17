@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+# vim: set softtabstop=2 ts=2 sw=2 expandtab: 
+#
+# Copyright (c) 2015 Karl Vollmer (karl.vollmer@gmail.com)
+#
+
+import os,subprocess,sys
+import ConfigParser
+import json
+import twitter
+
+
+def sendTweet():
+  """ Send a tweet """
+
+
+if __name__ == '__main__':
+  global Config
+  """ Load the Config file ./settings.conf """
+  Config = ConfigParser.ConfigParser()
+  try:
+    Config.read(os.path.dirname(os.path.abspath(__file__)) + '/settings.conf')
+  except IOError:
+    print ':Main:: IOError opening %s verify permissions' % (os.path.dirname(os.path.abspath(__file__)) + '/settings.conf')
+    sys.exit(1)
+

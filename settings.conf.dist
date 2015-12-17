@@ -1,0 +1,7 @@
+[twitter]
+; Twitter Oauth Authentication settings
+consumer_key=
+consumer_secret= 
+access_token=
+access_token_scret=
+
