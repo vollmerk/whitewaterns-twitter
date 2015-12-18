@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+# vim: set softtabstop=2 ts=2 sw=2 expandtab: 
+#
+# Copyright (c) 2015 Karl Vollmer (karl.vollmer@gmail.com)
+#
+import csv,sys,os
+import urllib
+from collections import deque
+import json
+
+"""
+ Read the last line of the hourly URL as defined by argv[1] and return the
+ current level
+"""
+
+try:
+  csvLine = deque(csv.reader(urllib.urlopen(sys.argv[1]),delimiter=','),1)[0]
+except IOError:
+  print ':Main:: Unable to open %s' % (sys.argv[1])
+
+""" Output a json string with the current level """ 
+print json.dumps({'name':csvLine[0],'date':csvLine[1],'level':csvLine[2]})

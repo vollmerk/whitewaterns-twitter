@@ -1,0 +1,1 @@
+{"name":"Roseway River","source":"http://dd.weather.gc.ca/hydrometric/csv/NS/hourly/NS_01EC001_hourly_hydrometric.csv","levels":{ "Flood": { "min":"3" }, "Cottage Run": { "max":"3","min":"2.80" }, "Lower Run": { "max":"2.9","min":"2.2" } }
