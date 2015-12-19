@@ -23,7 +23,7 @@ def sendTweet(tweetText):
     return False
 
   try:
-    #api.PostUpdate(tweetText)
+    api.PostUpdate(tweetText)
     print 'Tweeted %s to your account' % (tweetText)
     return True
   except:

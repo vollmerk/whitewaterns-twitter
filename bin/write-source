@@ -26,6 +26,17 @@ riverSource = [ {
         { 'name':'North Branch','min':'2','max':'3' },
         { 'name':'Cooks Falls','min':'1.5','max':'3' }
       ]
+    },
+    {
+      'uid':'Medway',
+      'name':'Medway River',
+      'type':'waterlevel-json',
+      'source':'http://whitewaterns.ca/gaugedata/data.json',
+      'level': [
+        { 'name':'Flood','min':'1.1','max':'999' },
+        { 'name':'Playboating','min':'0.75','max':'1.1' },
+        { 'name':'River run','min':'0.6','max':'1.1' }
+      ]
     }
   ]
 	
