@@ -42,10 +42,10 @@ def runCmd(cmd):
   else:
     return proc.stdout.read()
 
-def saveState(name,state):
+def saveState(name,state,level):
   """ Save the current state to a file in ./state """
   stateHandle = open(os.path.dirname(os.path.abspath(__file__)) + '/state/'+name,'w')
-  stateHandle.write(json.dumps({'state':state,'lastTweet':int(0)}))
+  stateHandle.write(json.dumps({'state':state,'lastTweet':int(0),'level':level}))
   stateHandle.close()
   return True
 
@@ -76,10 +76,10 @@ def checkLevels():
       if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
         if previousState['state'] == 'down': 
           sendTweet('%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level']))
-        saveState(stateName,'up')
+        saveState(stateName,'up',currentState['level'])
       elif previousState['state'] == 'up':
         sendTweet('%s (%s) is down Current Level %s' % (row['name'],level['name'],currentState['level']))
-        saveState(row['uid'],'down')
+        saveState(row['uid'],'down',currentState['level'])
 
 
 
