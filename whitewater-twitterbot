@@ -4,7 +4,7 @@
 # Copyright (c) 2015 Karl Vollmer (karl.vollmer@gmail.com)
 #
 
-import os,subprocess,sys
+import os,subprocess,sys,time
 import ConfigParser
 import json
 import twitter
@@ -44,8 +44,9 @@ def runCmd(cmd):
 
 def saveState(name,state,level):
   """ Save the current state to a file in ./state """
+  timestamp = int(time.time())
   stateHandle = open(os.path.dirname(os.path.abspath(__file__)) + '/state/'+name,'w')
-  stateHandle.write(json.dumps({'state':state,'lastTweet':int(0),'level':level}))
+  stateHandle.write(json.dumps({'state':state,'lastTweet':timestamp,'level':level}))
   stateHandle.close()
   return True
 
@@ -76,6 +77,8 @@ def checkLevels():
       if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
         if previousState['state'] == 'down': 
           sendTweet('%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level']))
+        elif (int(previousState['lastTweet'])+86400) <= int(time.time()):
+          sendTweet('%s (%s) is still up, it\'s at %s' % (row['name'],level['name'],currentState['level']))
         saveState(stateName,'up',currentState['level'])
       elif previousState['state'] == 'up':
         sendTweet('%s (%s) is down Current Level %s' % (row['name'],level['name'],currentState['level']))
