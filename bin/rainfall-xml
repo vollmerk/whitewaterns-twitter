@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+# vim: set softtabstop=2 ts=2 sw=2 expandtab: 
+import sys,os
+import xml.etree.ElementTree
+import urllib
+import json
+
+weather = xml.etree.ElementTree.fromstring(urllib.urlopen(sys.argv[1]).read())
+try:
+  yesterday = weather.find('yesterdayConditions')
+except:
+  sys.exit(0)
+
+try:
+  rainfall = yesterday.find('precip')
+except:
+  sys.exit(0)
+
+print json.dumps({'level':rainfall.text})

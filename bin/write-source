@@ -37,6 +37,24 @@ riverSource = [ {
         { 'name':'Playboating','min':'0.75','max':'1.1' },
         { 'name':'River run','min':'0.6','max':'1.1' }
       ]
+    },
+    {
+      'uid':'Musquodobit',
+      'name':'Musquodobit River',
+      'type':'rainfall-xml',
+      'source':'http://dd.weather.gc.ca/citypage_weather/xml/NS/s0000813_e.xml',
+      'level': [
+        { 'name':'River run','min':'40','max':'100','hours':'24' }
+      ]
+    },
+    {
+      'uid':'Gold',
+      'name':'Gold River',
+      'type':'rainfall-xml',
+      'source':'http://dd.weather.gc.ca/citypage_weather/xml/NS/s0000439_e.xml',
+      'level': [
+        { 'name':'Gorge','min':'40','max':'100','hours':'24'}
+      ]
     }
   ]
 	
