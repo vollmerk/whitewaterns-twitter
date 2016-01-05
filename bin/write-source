@@ -22,9 +22,9 @@ riverSource = [ {
       'type':'waterlevel-csv',
       'source':'http://dd.weather.gc.ca/hydrometric/csv/NS/hourly/NS_01EF001_hourly_hydrometric.csv',
       'level': [
-        { 'name':'Flood','min':'3','max':'999' },
+        { 'name':'Flood','min':'2.5','max':'999' },
         { 'name':'North Branch','min':'2','max':'3' },
-        { 'name':'Cooks Falls','min':'1.5','max':'3' }
+        { 'name':'Cooks Falls','min':'1.8','max':'2.3' }
       ]
     },
     {

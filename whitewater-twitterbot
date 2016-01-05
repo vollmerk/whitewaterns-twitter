@@ -77,9 +77,10 @@ def checkLevels():
       if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
         if previousState['state'] == 'down': 
           sendTweet('%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level']))
+          saveState(stateName,'up',currentState['level'])
         elif (int(previousState['lastTweet'])+86400) <= int(time.time()):
           sendTweet('%s (%s) is still up, it\'s at %s' % (row['name'],level['name'],currentState['level']))
-        saveState(stateName,'up',currentState['level'])
+          saveState(stateName,'up',currentState['level'])
       elif previousState['state'] == 'up':
         sendTweet('%s (%s) is down Current Level %s' % (row['name'],level['name'],currentState['level']))
         saveState(row['uid'],'down',currentState['level'])
