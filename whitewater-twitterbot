@@ -83,7 +83,7 @@ def checkLevels():
           saveState(stateName,'up',currentState['level'])
       elif previousState['state'] == 'up':
         sendTweet('%s (%s) is down Current Level %s' % (row['name'],level['name'],currentState['level']))
-        saveState(row['uid'],'down',currentState['level'])
+        saveState(stateName,'down',currentState['level'])
 
 
 
