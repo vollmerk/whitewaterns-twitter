@@ -78,7 +78,7 @@ def checkLevels():
         if previousState['state'] == 'down': 
           sendTweet('%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level']))
           saveState(stateName,'up',currentState['level'])
-        elif (int(previousState['lastTweet'])+86400) <= int(time.time()):
+        elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet('%s (%s) is still up, it\'s at %s' % (row['name'],level['name'],currentState['level']))
           saveState(stateName,'up',currentState['level'])
       elif previousState['state'] == 'up':

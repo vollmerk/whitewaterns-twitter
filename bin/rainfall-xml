@@ -16,4 +16,8 @@ try:
 except:
   sys.exit(0)
 
-print json.dumps({'level':rainfall.text})
+if not rainfall.text:
+  percip=0
+else:
+  percip=int(float(rainfall.text))
+print json.dumps({'level':percip})
