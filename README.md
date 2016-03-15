@@ -3,7 +3,7 @@ Twitterbot for WhitewaterNS twitter account, reads in water levels / forecasts a
 and tweets out information so we don't have to check a bunch of places. It checks, or will check 
 the following
 
- * Magicseaweed
+ * Environment Canada Swell Heigh data
  * Environment Canada hydrometric data
  * Environment Canada last 24hr rainfall amounts
  * Medway river gauge
@@ -32,3 +32,13 @@ up the application into a few pieces.
  * python-twitter
  * JSON 
  * tinyurl
+
+#### Additional requirements for some gathering methods
+
+ Wave heigh data is pulled from GRIB files as such you'll need the following Python libs in addition
+ to the above to use any of the surf functions
+
+ * numpy
+ * grib
+ * gribapi
+ * urllib
