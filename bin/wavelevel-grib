@@ -15,4 +15,6 @@ tmpfile.read()
 grbs = pygrib.open(tmpfile.name)
 for grb in grbs:
   print grb
+  lats, lons = grb.latlons()
+  print 'min/max lat and lon', lats.min(),lats.max(),lons.min(),lons.max()
   print grb.values

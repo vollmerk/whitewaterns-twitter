@@ -12,7 +12,8 @@ riverSource = [ {
     'type':'waterlevel-csv',
     'source':'http://dd.weather.gc.ca/hydrometric/csv/NS/hourly/NS_01EC001_hourly_hydrometric.csv',
     'level': [
-      { 'name':'River run','max':'3.5','min':'2.58' },
+      { 'name':'River run','max':'3.5','min':'2.55' },
+      { 'name':'Cottage Wave','max':'3.5','min':'2.65' }
       ]
     },
     {
