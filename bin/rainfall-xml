@@ -3,9 +3,13 @@
 import sys,os
 import xml.etree.ElementTree
 import urllib
-import json
+import json,math
 
-weather = xml.etree.ElementTree.fromstring(urllib.urlopen(sys.argv[1]).read())
+try:
+  weather = xml.etree.ElementTree.fromstring(urllib.urlopen(sys.argv[1]).read())
+except:
+  sys.exit(0)
+
 try:
   yesterday = weather.find('yesterdayConditions')
 except:
@@ -19,5 +23,6 @@ except:
 if not rainfall.text:
   percip=0
 else:
-  percip=int(float(rainfall.text))
+  percip=int(math.ceil(float(rainfall.text)))
 print json.dumps({'level':percip})
+sys.exit(0)
