@@ -54,6 +54,15 @@ riverSource = [ {
       'level': [
         { 'name':'Gorge','min':'40','max':'100','hours':'24'}
       ]
+    },
+    {
+      'uid':'Salmon',
+      'name':'Salmon River',
+      'type':'rainfall-xml',
+      'source':'http://dd.weather.gc.ca/citypage_weather/xml/NS/s0000813_e.xml',
+      'level':[
+        { 'name':'River run','min':'40','max':'110','hours':'12'}
+      ]
     }
   ]
 	
