@@ -14,7 +14,7 @@ import json
 """
 
 try:
-  jsonLine = deque(json.loads(urllib.urlopen(sys.argv[1]).read()),1)[0]
+  jsonLine = deque(json.loads(urllib.urlopen(sys.argv[1]).read()))[0]
 except IOError:
   print ':Main:: Unable to open %s' % (sys.argv[1])
 
