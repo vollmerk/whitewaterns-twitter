@@ -74,6 +74,16 @@ riverSource = [ {
          ]
     },
     {
+      'uid':'Chiganois',
+      'name':'Chiganois River',
+      'type':'waterlevel-csv',
+      'source':'http://dd.weather.gc.ca/hydrometric/csv/NS/hourly/NS_01DJ005_hourly_hydrometric.csv',
+      'level': [
+         { 'name': 'River run','min':'1.4','max':'2.5'}
+         ]
+    },
+
+    {
       'uid':'Gold',
       'name':'Gold River',
       'type':'rainfall-xml',
