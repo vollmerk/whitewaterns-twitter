@@ -66,6 +66,12 @@ def saveStatetoDB(name,state,run,level):
   dbh.close()
   return True
 
+def saveStatetoImage(name,state,run,level):
+
+
+
+  return True
+
 
 def checkLevels():
   sourceHandle = open(os.path.dirname(os.path.abspath(__file__)) + '/source.json')
@@ -92,10 +98,13 @@ def checkLevels():
       """ Look at the current level, and update the the database """
       if float(currentState['level']) < float(level['min']):
         saveStatetoDB(row['uid'],'down',level['name'],currentState['level'])
+	saveStatetoImage(row['uid'],'down',level['name'],currentState['level'])
       elif float(currentState['level']) >= float(level['max']):
         saveStatetoDB(row['uid'],'flood',level['name'],currentState['level'])
+	saveStatetoImage(row['uid'],'flood',level['name'],currentState['level'])
       elif float(currentState['level']) >= float(level['min']) and float(currentState['level']) < float(level['max']):
         saveStatetoDB(row['uid'],'up',level['name'],currentState['level'])
+	saveStatetoImage(row['uid'],'up',level['name'],currentState['level'])
 
       """ See if we should tweet out a change in this level """
       if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
