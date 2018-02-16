@@ -9,7 +9,9 @@ import ConfigParser
 import json
 import twitter
 import tinyurl
-
+import sqlite3
+from datetime import datetime
+from tzlocal import get_localzone
 
 def sendTweet(tweetText):
   """ Send a tweet """
@@ -50,6 +52,20 @@ def saveState(name,state,level):
   stateHandle.close()
   return True
 
+def saveStatetoDB(name,state,run,level):
+  """ For now don't save things, not sure what I want to do with this data... """
+  return True
+  """ Get the Now time """
+  now = datetime.now(get_localzone())
+
+  dbh = sqlite3.connect(os.path.dirname(os.path.abspath(__file__)) + '/' + Config.get('sql','database_name'))
+  dbcursor = dbh.cursor()
+  dbcursor.execute('''CREATE TABLE IF NOT EXISTS levels (date text,name text,run text,state text,level real)''')
+  dbcursor.execute('INSERT INTO levels VALUES (?,?,?,?,?)',[now.isoformat('T'),name,state,run,level])
+  dbh.commit()
+  dbh.close()
+  return True
+
 
 def checkLevels():
   sourceHandle = open(os.path.dirname(os.path.abspath(__file__)) + '/source.json')
@@ -72,6 +88,14 @@ def checkLevels():
         previousState = json.loads(open(os.path.dirname(os.path.abspath(__file__)) + '/state/' + stateName).read())
       else:
         previousState = { 'state':'down','lastTweet':int('0') }
+
+      """ Look at the current level, and update the the database """
+      if float(currentState['level']) < float(level['min']):
+        saveStatetoDB(row['uid'],'down',level['name'],currentState['level'])
+      elif float(currentState['level']) >= float(level['max']):
+        saveStatetoDB(row['uid'],'flood',level['name'],currentState['level'])
+      elif float(currentState['level']) >= float(level['min']) and float(currentState['level']) < float(level['max']):
+        saveStatetoDB(row['uid'],'up',level['name'],currentState['level'])
 
       """ See if we should tweet out a change in this level """
       if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):

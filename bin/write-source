@@ -93,12 +93,23 @@ riverSource = [ {
       ]
     },
     {
+      'uid':'StMarys',
+      'name':'StMarys River',
+      'type':'waterlevel-csv',
+      'source':'http://dd.weather.gc.ca/hydrometric/csv/NS/hourly/NS_01EO001_hourly_hydrometric.csv',
+      'level':[
+        { 'name':'Playboating','min':'5','max':'6.5'}
+        ]
+    },
+    {
       'uid':'Salmon',
       'name':'Salmon River',
-      'type':'rainfall-xml',
-      'source':'http://dd.weather.gc.ca/citypage_weather/xml/NS/s0000813_e.xml',
+      'type':'waterlevel-csv',
+      'source':'http://dd.weather.gc.ca/hydrometric/csv/NS/hourly/NS_01DH002_hourly_hydrometric.csv',
       'level':[
-        { 'name':'River run','min':'40','max':'110','hours':'12'}
+        { 'name':'Short Run','min':'1','max':'3'},
+        { 'name':'Blackrock','min':'1.45','max':'3'},
+        { 'name':'Riversdale','min':'1.55','max':'3'}
       ]
     }
   ]
