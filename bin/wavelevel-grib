@@ -6,15 +6,24 @@
 import numpy as np,sys,tempfile
 import pygrib
 import urllib
+import json
+
+## Lons are + always, so -63 == 297 (360-63)
 
 source = urllib.urlopen(sys.argv[1])
 tmpfile = tempfile.NamedTemporaryFile()
 tmpfile.write(source.read())
 tmpfile.read()
 
+wavelevels = []
 grbs = pygrib.open(tmpfile.name)
 for grb in grbs:
-  print grb
-  lats, lons = grb.latlons()
-  print 'min/max lat and lon', lats.min(),lats.max(),lons.min(),lons.max()
-  print grb.values
+  """ From above, maybe as a try? """
+  ##wave = grbs.select(name='Significant height of wind waves')
+  #data, lats, lons = grb.data(lat1=34,lat2=46,lon1=296,lon2=299)
+  data, lats, lons = grb.data(lat1=44.3,lat2=44.6,lon1=297,lon2=297.3)
+  for row in data:
+    wavelevels.append(np.mean(row))
+
+level = round(np.mean(wavelevels),2)
+print json.dumps({'level':level})
