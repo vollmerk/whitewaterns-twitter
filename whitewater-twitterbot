@@ -98,6 +98,78 @@ def saveStatetoImage(name,state,run,level):
 
   return True
 
+""" Based on the Type, run whatever checks we should be running to determine if this is "UP" """
+def isUp(state,sourceType,level):
+
+  """ Rules:
+    - Above Min
+    - Below Max
+  """
+  if sourceType == 'river':
+    if state['level'] < level['max'] and state['level'] >= level['min']:
+      return True
+
+  """ Rules:
+    - Above min
+    - Below max
+    - Period is higher than min
+    - Between Min & Max direction
+    - Between min & max tide point
+    - Between min & max wind from Direction A-Z
+  """
+  elif sourceType == 'surf':
+    if (state['level'] < level['max'] and state['level'] >= level['min'] and
+        state['direction'] < level['dirmax'] and state['direction'] >= level['dirmin'] and
+        state['period'] > level['permin']):
+      return True
+
+  """ Rules:
+    - Above Min
+    - Below Max
+    - Between min & max tide point
+  """
+  elif sourceType == 'tidal':
+    return False
+
+  return False
+
+def isFlood(state,sourceType,level):
+
+  if sourceType == 'river':
+    if state['level'] >= level['max']: 
+      return True
+
+  """ Rules:
+    - too big of waves
+    - bad direction
+    - waves above min, but period below min
+  """
+  elif sourceType == 'surf':
+    if (state['level'] >= level['max'] or state['direction'] < level['dirmin'] or state['direction'] > level ['dirmax'] or
+        (state['level'] >= level['min'] and state['period'] < level['permin'])):
+      return True
+
+  return False
+
+def isDown(state,sourceType,level):
+
+  return False
+
+def tweetMsg(name,location,data,state,sourceType):
+  twitterText = ''
+
+  if sourceType == 'river':
+    if state == 'up':
+      twitterText = '%s (%s) is up! Current Level %s' % (name,location,data['level'])
+    elif state == 'down':
+      twitterText = '%s (%s) is down, Current Level %s' % (name,location,data['level'])
+    elif state == 'flood':
+      twitterText = '%s (%s) is in flood, Current Level %s' % (name,location,data['level'])
+  elif sourceType == 'surf':
+    if state == 'up':
+      twitterText = '%s is working, %s%s' % (location,data['level'],data['level_info'])
+
+  return twitterText
 
 def checkLevels():
   sourceHandle = open(os.path.dirname(os.path.abspath(__file__)) + '/source.json')
