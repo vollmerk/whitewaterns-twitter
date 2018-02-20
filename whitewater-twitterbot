@@ -4,7 +4,7 @@
 # Copyright (c) 2015 Karl Vollmer (karl.vollmer@gmail.com)
 #
 
-import os,subprocess,sys,time
+import os,subprocess,sys,time,shutil
 import ConfigParser
 import json
 import twitter
@@ -68,7 +68,14 @@ def saveStatetoDB(name,state,run,level):
 
 def saveStatetoImage(name,state,run,level):
 
-
+  """ just Copy some files man this ain't rocket science """
+  """ FIXME: should use same extension as source, but really you should be using png """
+  target = Config.get('dashboard','target_dir') + '/' + name.replace(' ','') + run.replace(' ','') + '.png'
+  source = Config.get('dashboard',state + '_image')
+  try:
+    shutil.copyfile(source,target)
+  except:
+    print 'Unable to copy %s to %s bummer' % (source,target)
 
   return True
 
@@ -98,13 +105,13 @@ def checkLevels():
       """ Look at the current level, and update the the database """
       if float(currentState['level']) < float(level['min']):
         saveStatetoDB(row['uid'],'down',level['name'],currentState['level'])
-	saveStatetoImage(row['uid'],'down',level['name'],currentState['level'])
+        saveStatetoImage(row['uid'],'down',level['name'],currentState['level'])
       elif float(currentState['level']) >= float(level['max']):
         saveStatetoDB(row['uid'],'flood',level['name'],currentState['level'])
-	saveStatetoImage(row['uid'],'flood',level['name'],currentState['level'])
+        saveStatetoImage(row['uid'],'flood',level['name'],currentState['level'])
       elif float(currentState['level']) >= float(level['min']) and float(currentState['level']) < float(level['max']):
         saveStatetoDB(row['uid'],'up',level['name'],currentState['level'])
-	saveStatetoImage(row['uid'],'up',level['name'],currentState['level'])
+        saveStatetoImage(row['uid'],'up',level['name'],currentState['level'])
 
       """ See if we should tweet out a change in this level """
       if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
