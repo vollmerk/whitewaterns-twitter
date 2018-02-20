@@ -105,11 +105,11 @@ riverSource = [ {
       'uid':'Halifax',
       'name':'Ocean Surf',
       'type':'wavelevel-grib',
-      'source':'http://dd.weather.gc.ca/model_wave/ocean/gulf-st-lawrence/grib2/00/CMC_rdwps_gulf-st-lawrence_SWELL_SFC_0_latlon0.05x0.05_2018022000_P000.grib2',
+      'source':'http://dd.weather.gc.ca/model_wave/ocean/gulf-st-lawrence/grib2/00/CMC_rdwps_gulf-st-lawrence_HTSGW_SFC_0_latlon0.05x0.05',
       'level':[
-        { 'name':'Sea Kayak','min':'0.2','max':'1.2'},
-        { 'name':'Whitewater Kayak','min':'1','max':'3.5'},
-        { 'name':'Surfboard','min':'1','max':'12'}
+        { 'name':'Lawrencetown','min':'1','max':'8','dirmin':'112.5','dirmax':'157.5'},
+        { 'name':'Seaforth','min':'1','max':'8','dirmin':'22.5','dirmax':'112'},
+        { 'name':'Subdivision','min':'2','max':'12','dirmin':'90','dirmax':'180'}
         ]
     },
     {

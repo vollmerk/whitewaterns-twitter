@@ -32,6 +32,25 @@ def sendTweet(tweetText):
     print 'Unable to send %s to twitter, tweet failure' % (tweetText)
     return False
 
+def sendSurfTweet(tweetText):
+  """ Send a tweet """
+  try: 
+    api = twitter.Api(consumer_key=Config.get('surftwitter','consumer_key'),
+      consumer_secret=Config.get('surftwitter','consumer_secret'),
+      access_token_key=Config.get('surftwitter','access_token'),
+      access_token_secret=Config.get('surftwitter','access_token_secret'))
+  except:
+    print 'Unable to connect to Twitter please verify your API credentials'
+    return False
+
+  try:
+    api.PostUpdate(tweetText)
+    print 'Tweeted %s to your account' % (tweetText)
+    return True
+  except:
+    print 'Unable to send %s to twitter, tweet failure' % (tweetText)
+    return False
+
 
 def runCmd(cmd):
   """ Run the command, and then wait for it to finish """
@@ -93,6 +112,13 @@ def checkLevels():
     else:
       currentState = json.loads(cmdResults)
 
+    """ Set default type to river if not defined """
+    if 'level_type' in currentState:
+      levelType = currentState['level_type']
+    else:
+      levelType = 'river'
+
+
     """ Now we need to figure out if we need to tweet something """
     for level in row['level']:
       stateName = row['uid']+level['name']
@@ -102,43 +128,63 @@ def checkLevels():
       else:
         previousState = { 'state':'down','lastTweet':int('0') }
 
-      """ Look at the current level, and update the the database """
-      if float(currentState['level']) < float(level['min']):
-        saveStatetoDB(row['uid'],'down',level['name'],currentState['level'])
-        saveStatetoImage(row['uid'],'down',level['name'],currentState['level'])
-      elif float(currentState['level']) >= float(level['max']):
-        saveStatetoDB(row['uid'],'flood',level['name'],currentState['level'])
-        saveStatetoImage(row['uid'],'flood',level['name'],currentState['level'])
-      elif float(currentState['level']) >= float(level['min']) and float(currentState['level']) < float(level['max']):
-        saveStatetoDB(row['uid'],'up',level['name'],currentState['level'])
-        saveStatetoImage(row['uid'],'up',level['name'],currentState['level'])
+      """ Rivers, Tides and Surf all have different conditionals for Up/down let's use a function """
+      if levelType == 'river':
 
-      """ Set default type to river if not defined """
-      if level_type in currentState:
-        levelType = currentState['level_type']
-      else:
-        levelType = 'river'
+        """ Look at the current level, and update the the database """
+        if float(currentState['level']) < float(level['min']):
+          saveStatetoDB(row['uid'],'down',level['name'],currentState['level'])
+          saveStatetoImage(row['uid'],'down',level['name'],currentState['level'])
+        elif float(currentState['level']) >= float(level['max']):
+          saveStatetoDB(row['uid'],'flood',level['name'],currentState['level'])
+          saveStatetoImage(row['uid'],'flood',level['name'],currentState['level'])
+        elif float(currentState['level']) >= float(level['min']) and float(currentState['level']) < float(level['max']):
+          saveStatetoDB(row['uid'],'up',level['name'],currentState['level'])
+          saveStatetoImage(row['uid'],'up',level['name'],currentState['level'])
+  
+        """ See if we should tweet out a change in this level """
+        if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
+          if previousState['state'] == 'down':
+            sendTweet('%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level']))
+            saveState(stateName,'up',currentState['level'])
+          elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
+            sendTweet('%s (%s) is still up, it\'s at %s' % (row['name'],level['name'],currentState['level']))
+            saveState(stateName,'up',currentState['level'])
+        elif float(currentState['level']) >= float(level['max']) and previousState['state'] == 'up':
+          sendTweet('%s (%s) is in Flood, current level is %s' % (row['name'],level['name'],currentState['level']))
+          saveState(stateName,'down',currentState['level'])
+        elif previousState['state'] == 'up':
+          sendTweet('%s (%s) is down Current Level %s' % (row['name'],level['name'],currentState['level']))
+          saveState(stateName,'down',currentState['level'])
 
-      """ See if we should tweet out a change in this level """
-      if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
-        if previousState['state'] == 'down': 
-          if levelType == 'river':
-            tweetText = '%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level'])
-          elif levelType == 'surf':
-            tweetText = '%s (%s) up! %s%s' % (row['name'],level['name'],currentState['level'],currentState['level_info'])
-          sendTweet(tweetText)
-          saveState(stateName,'up',currentState['level'])
-        elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
-          sendTweet('%s (%s) is still up, it\'s at %s' % (row['name'],level['name'],currentState['level']))
-          saveState(stateName,'up',currentState['level'])
-      elif float(currentState['level']) >= float(level['max']) and previousState['state'] == 'up':
-        sendTweet('%s (%s) is in Flood, current level is %s' % (row['name'],level['name'],currentState['level']))
-        saveState(stateName,'down',currentState['level'])
-      elif previousState['state'] == 'up':
-        sendTweet('%s (%s) is down Current Level %s' % (row['name'],level['name'],currentState['level']))
-        saveState(stateName,'down',currentState['level'])
+      elif levelType == 'surf':
 
-
+        """ Up is min/max + dirmin/dirmax """
+        if float(currentState['level']) >= float(level['min']) and float(currentState['level']) < float(level['max']) and float(currentState['direction']) >= float(level['dirmin']) and float(currentState['direction']) <= float(level['dirmax']):
+          if previousState['state'] == 'down':
+            sendTweet('%s (%s) is up! %s%s' % (row['name'],level['name'],currentState['level'],currentState['level_info']))
+            sendSurfTweet('%s is up! %s%s' % (level['name'],currentState['level'],currentState['level_info']))
+            saveState(stateName,'up',currentState['level'])
+            saveStatetoImage(row['uid'],'up',level['name'],currentState['level'])
+          elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
+            sendTweet('%s (%s) is still up! %s%s' % (row['name'],level['name'],currentState['level'],currentState['level_info']))
+            sendSurfTweet('%s is still up! %s%s' % (level['name'],currentState['level'],currentState['level_info']))
+            saveState(stateName,'up',currentState['level'])
+        elif (float(currentState['level']) >= float(level['max'])) or float(currentState['direction'] > float(level['dirmax']) or float(currentState['direction']) < float(level['dirmin'])):
+            if previousState['state'] != 'flood':
+              sendTweet('%s (%s) is not ideal %s%s' % (row['name'],level['name'],currentState['level'],currentState['level_info'])) 
+              sendSurfTweet('%s is not ideal %s%s' % (level['name'],currentState['level'],currentState['level_info'])) 
+              saveState(stateName,'flood',currentState['level'])
+              saveStatetoImage(row['uid'],'flood',level['name'],currentState['level'])
+            elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
+              sendTweet('%s (%s) is not ideal %s%s' % (row['name'],level['name'],currentState['level'],currentState['level_info']))
+              sendSurfTweet('%s is not ideal %s%s' % (level['name'],currentState['level'],currentState['level_info']))
+              saveState(stateName,'flood',currentState['level'])
+        elif previousState['state'] == 'up' or previousState['state'] == 'flood':
+            sendTweet('%s (%s) is down %s%s' % (row['name'],level['name'],currentState['level'],currentState['level_info']))
+            sendSurfTweet('%s is down %s%s' % (level['name'],currentState['level'],currentState['level_info']))
+            saveState(stateName,'down',currentState['level'])
+            saveStatetoImage(row['uid'],'down',level['name'],currentState['level'])
 
 if __name__ == '__main__':
   global Config

@@ -7,17 +7,26 @@ import numpy as np,sys,tempfile
 import pygrib
 import urllib
 import json
+from datetime import datetime, timedelta
 
 """
  Lons are + always, so -63 == 297 (360-63)
  This script expects to always get the significant wave+swell height, and will then go back
  and grab period and direction for same area SWDIR and SWPER
  FIXME: Should accept additional arguments, of lat/lon constraint
+ For the source we have to set the date string part cause :( 
 """
-heightsource = sys.argv[1]
+heightsource = sys.argv[1] + '_' + datetime.now().strftime("%Y%m%d") + '00_P000.grib2'
+try:
+  source = urllib.urlopen(heightsource)
+except:
+  """ Try yesterday """
+  day = datetime.now() - timedelta(days=1)
+  heightsource = sys.argv[1] + '_' + day.strftime("%Y%m%d") + '00_P000.grib2'
+  source = urllib.urlopen(heightsource)
+
 dirsource = heightsource.replace("HTSGW_","SWDIR_")
 persource = heightsource.replace("HTSGW_","SWPER_")
-source = urllib.urlopen(sys.argv[1])
 tmpfile = tempfile.NamedTemporaryFile()
 tmpfile.write(source.read())
 tmpfile.read()
@@ -59,6 +68,10 @@ for grb in grbs:
 
 period = round(np.mean(waveper),2)
 
-level_info = 'm at %s seconds, from %s degrees' % (period,direction)
+cardinalarray = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE","S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+cardinalkey = int((direction)/22.5)
+cardinal = cardinalarray[cardinalkey % 16]
 
-print json.dumps({'level':level,'level_type':'surf','level_info':level_info})
+level_info = 'm %s at %s seconds' % (cardinal,period)
+
+print json.dumps({'level':level,'level_type':'surf','level_info':level_info,'direction':direction,'period':period})
