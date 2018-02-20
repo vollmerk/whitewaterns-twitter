@@ -25,9 +25,6 @@ tmpfile.read()
 wavelevels = []
 grbs = pygrib.open(tmpfile.name)
 for grb in grbs:
-  """ From above, maybe as a try? """
-  ##wave = grbs.select(name='Significant height of wind waves')
-  #data, lats, lons = grb.data(lat1=34,lat2=46,lon1=296,lon2=299)
   data, lats, lons = grb.data(lat1=44.3,lat2=44.6,lon1=297,lon2=297.3)
   for row in data:
     wavelevels.append(np.mean(row))
@@ -39,22 +36,23 @@ tmpfile = tempfile.NamedTemporaryFile()
 tmpfile.write(source.read())
 tmpfile.read()
 
+wavedirs = []
 grbs = pygrib.open(tmpfile.name)
-for grb in grbs
+for grb in grbs:
   data, lats, lons = grb.data(lat1=44.3,lat2=44.6,lon1=297,lon2=297.3)
   for row in data:
     wavedirs.append(np.mean(row))
 
 direction = round(np.mean(wavedirs),2)
-level_info = direction 
 
 source = urllib.urlopen(persource)
 tmpfile = tempfile.NamedTemporaryFile()
 tmpfile.write(source.read())
 tmpfile.read()
 
+waveper = []
 grbs = pygrib.open(tmpfile.name)
-for grb in grbs
+for grb in grbs:
   data, lats, lons = grb.data(lat1=44.3,lat2=44.6,lon1=297,lon2=297.3)
   for row in data:
     waveper.append(np.mean(row))
@@ -63,4 +61,4 @@ period = round(np.mean(waveper),2)
 
 level_info = 'm at %s seconds, from %s degrees' % (period,direction)
 
-print json.dumps({'level':level,'level_type':'surf','level_info',level_info})
+print json.dumps({'level':level,'level_type':'surf','level_info':level_info})

@@ -113,10 +113,20 @@ def checkLevels():
         saveStatetoDB(row['uid'],'up',level['name'],currentState['level'])
         saveStatetoImage(row['uid'],'up',level['name'],currentState['level'])
 
+      """ Set default type to river if not defined """
+      if level_type in currentState:
+        levelType = currentState['level_type']
+      else:
+        levelType = 'river'
+
       """ See if we should tweet out a change in this level """
       if float(currentState['level']) >= float(level['min']) and float(currentState['level']) <= float(level['max']):
         if previousState['state'] == 'down': 
-          sendTweet('%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level']))
+          if levelType == 'river':
+            tweetText = '%s (%s) is up! Current Level %s' % (row['name'],level['name'],currentState['level'])
+          elif levelType == 'surf':
+            tweetText = '%s (%s) up! %s%s' % (row['name'],level['name'],currentState['level'],currentState['level_info'])
+          sendTweet(tweetText)
           saveState(stateName,'up',currentState['level'])
         elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet('%s (%s) is still up, it\'s at %s' % (row['name'],level['name'],currentState['level']))
