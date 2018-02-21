@@ -113,6 +113,16 @@ riverSource = [ {
         ]
     },
     {
+      'uid':'ClamHarbour',
+      'name':'Clam Harbour',
+      'type':'wavelevel-grib',
+      'loc': { 'latmin':'40','latmax':'45','lonmin':'40','lonmax':'45' },
+      'source': 'http://dd.weather.gc.ca/model_wave/ocean/gulf-st-lawrence/grib2/00/CMC_rdwps_gulf-st-lawrence_HTSGW_SFC_0_latlon0.05x0.05',
+      'level': [
+        { 'name':'Sea Kayak','min':'1','max':'2','dirmin':'112.5','dirmax':'157.5','permin':'6'},
+      ]
+    },
+    {
       'uid':'Salmon',
       'name':'Salmon River',
       'type':'waterlevel-csv',
