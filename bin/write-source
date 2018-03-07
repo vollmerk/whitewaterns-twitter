@@ -128,7 +128,7 @@ riverSource = [ {
       'type':'waterlevel-csv',
       'source':'http://dd.weather.gc.ca/hydrometric/csv/NS/hourly/NS_01DH002_hourly_hydrometric.csv',
       'level':[
-        { 'name':'Short Run','min':'1','max':'3'},
+        { 'name':'Cornerwave','min':'1','max':'3'},
         { 'name':'Blackrock','min':'1.45','max':'3'},
         { 'name':'Riversdale','min':'1.55','max':'3'}
       ]
