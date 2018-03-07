@@ -87,12 +87,12 @@ def saveStatetoDB(name,state,run,data,runType):
   else:
     level_txt = data['level']
 
-  data = { 'date': datetime.datetime.utcnow(),'name': name,'run' : run,'state': state,'level': level_txt }
+  data = { 'date': datetime.datetime.utcnow(),'name': name,'run' : run,'state': state,'level': data['level'], 'info': level_txt }
 
   """ Open a connection to the DB """
   client = MongoClient('localhost',27017)
   dbh = client['whitewaterns']
-  post_id = dbh.data.insert_one(data).inserted_id
+  result = dbh.leveldata.insert_one(data)
 
   return True
 
@@ -218,34 +218,34 @@ def checkLevels():
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'up',levelType),levelType)        
           saveState(stateName,'up',currentState['level'])
           saveStatetoImage(row['name'],'up',level['name'],currentState['level'])
-          saveStatetoDb(row['name'],'up',level['name'],currentState,levelType)
+          saveStatetoDB(row['name'],'up',level['name'],currentState,levelType)
         elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'up',levelType),levelType)        
           saveState(stateName,'up',currentState['level'])
           saveStatetoImage(row['name'],'up',level['name'],currentState['level'])
-          saveStatetoDb(row['name'],'up',level['name'],currentState,levelType)
+          saveStatetoDB(row['name'],'up',level['name'],currentState,levelType)
       elif isFlood(currentState,levelType,level):
         if previousState['state'] != 'flood':
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'flood',levelType),levelType)        
           saveState(stateName,'flood',currentState['level'])
           saveStatetoImage(row['name'],'flood',level['name'],currentState['level'])
-          saveStatetoDb(row['name'],'flood',level['name'],currentState,levelType)
+          saveStatetoDB(row['name'],'flood',level['name'],currentState,levelType)
         elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'flood',levelType),levelType)        
           saveState(stateName,'flood',currentState['level'])
           saveStatetoImage(row['name'],'flood',level['name'],currentState['level'])
-          saveStatetoDb(row['name'],'flood',level['name'],currentState,levelType)
+          saveStatetoDB(row['name'],'flood',level['name'],currentState,levelType)
       elif isDown(currentState,levelType,level):
         if previousState['state'] != 'down':
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'down',levelType),levelType)        
           saveState(stateName,'down',currentState['level'])
           saveStatetoImage(row['name'],'down',level['name'],currentState['level'])
-          saveStatetoDb(row['name'],'down',level['name'],currentState,levelType)
+          saveStatetoDB(row['name'],'down',level['name'],currentState,levelType)
         elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'down',levelType),levelType)        
           saveState(stateName,'down',currentState['level'])
           saveStatetoImage(row['name'],'down',level['name'],currentState['level'])
-          saveStatetoDb(row['name'],'down',level['name'],currentState,levelType)
+          saveStatetoDB(row['name'],'down',level['name'],currentState,levelType)
 
 if __name__ == '__main__':
   global Config
