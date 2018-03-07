@@ -9,7 +9,7 @@ import ConfigParser
 import json
 import twitter
 import tinyurl
-import sqlite3
+from pymongo import MongoClient
 from datetime import datetime
 from tzlocal import get_localzone
 
@@ -76,18 +76,24 @@ def saveState(name,state,level):
   stateHandle.close()
   return True
 
-def saveStatetoDB(name,state,run,level):
+def saveStatetoDB(name,state,run,data,runType):
   """ For now don't save things, not sure what I want to do with this data... """
   return True
   """ Get the Now time """
   now = datetime.now(get_localzone())
 
-  dbh = sqlite3.connect(os.path.dirname(os.path.abspath(__file__)) + '/' + Config.get('sql','database_name'))
-  dbcursor = dbh.cursor()
-  dbcursor.execute('''CREATE TABLE IF NOT EXISTS levels (date text,name text,run text,state text,level real)''')
-  dbcursor.execute('INSERT INTO levels VALUES (?,?,?,?,?)',[now.isoformat('T'),name,state,run,level])
-  dbh.commit()
-  dbh.close()
+  if runType == 'surf':
+    level_txt = data['level'] + data['level_info']
+  else:
+    level_txt = data['level']
+
+  data = { 'date': datetime.datetime.utcnow(),'name': name,'run' : run,'state': state,'level': level_txt }
+
+  """ Open a connection to the DB """
+  client = MongoClient('localhost',27017)
+  dbh = client['whitewaterns']
+  post_id = dbh.data.insert_one(data).inserted_id
+
   return True
 
 def saveStatetoImage(name,state,run,level):
@@ -209,31 +215,37 @@ def checkLevels():
       """ This could be simplifed by saveState() doing everything """
       if isUp(currentState,levelType,level):
         if previousState['state'] != 'up':
-          sendTweet(tweetMsg(row['name'],level['name'],cu,rrentState,'up',levelType),levelType)        
+          sendTweet(tweetMsg(row['name'],level['name'],currentState,'up',levelType),levelType)        
           saveState(stateName,'up',currentState['level'])
           saveStatetoImage(row['name'],'up',level['name'],currentState['level'])
+          saveStatetoDb(row['name'],'up',level['name'],currentState,levelType)
         elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'up',levelType),levelType)        
           saveState(stateName,'up',currentState['level'])
           saveStatetoImage(row['name'],'up',level['name'],currentState['level'])
+          saveStatetoDb(row['name'],'up',level['name'],currentState,levelType)
       elif isFlood(currentState,levelType,level):
         if previousState['state'] != 'flood':
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'flood',levelType),levelType)        
           saveState(stateName,'flood',currentState['level'])
           saveStatetoImage(row['name'],'flood',level['name'],currentState['level'])
+          saveStatetoDb(row['name'],'flood',level['name'],currentState,levelType)
         elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'flood',levelType),levelType)        
           saveState(stateName,'flood',currentState['level'])
           saveStatetoImage(row['name'],'flood',level['name'],currentState['level'])
+          saveStatetoDb(row['name'],'flood',level['name'],currentState,levelType)
       elif isDown(currentState,levelType,level):
         if previousState['state'] != 'down':
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'down',levelType),levelType)        
           saveState(stateName,'down',currentState['level'])
           saveStatetoImage(row['name'],'down',level['name'],currentState['level'])
+          saveStatetoDb(row['name'],'down',level['name'],currentState,levelType)
         elif (int(previousState['lastTweet'])+172800) <= int(time.time()):
           sendTweet(tweetMsg(row['name'],level['name'],currentState,'down',levelType),levelType)        
           saveState(stateName,'down',currentState['level'])
           saveStatetoImage(row['name'],'down',level['name'],currentState['level'])
+          saveStatetoDb(row['name'],'down',level['name'],currentState,levelType)
 
 if __name__ == '__main__':
   global Config
