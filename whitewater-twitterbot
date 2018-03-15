@@ -77,17 +77,15 @@ def saveState(name,state,level):
   return True
 
 def saveStatetoDB(name,state,run,data,runType):
-  """ For now don't save things, not sure what I want to do with this data... """
-  return True
   """ Get the Now time """
   now = datetime.now(get_localzone())
 
   if runType == 'surf':
-    level_txt = data['level'] + data['level_info']
+    level_txt = str(data['level']) + str(data['level_info'])
   else:
     level_txt = data['level']
 
-  data = { 'date': datetime.datetime.utcnow(),'name': name,'run' : run,'state': state,'level': data['level'], 'info': level_txt }
+  data = { 'date': datetime.utcnow(),'name': name,'run' : run,'state': state,'level': data['level'], 'info': level_txt }
 
   """ Open a connection to the DB """
   client = MongoClient('localhost',27017)
